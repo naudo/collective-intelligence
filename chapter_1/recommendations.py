@@ -63,7 +63,7 @@ def sim_pearson(prefs, p1, p2):
     return r
 
 def sim_manhattan(prefs, p1,p2):
-    si = {}
+    """ Measure the distance between 2 points along axes"""
     total = 0
     p1_prefs = prefs[p1]
     p2_prefs = prefs[p2]
@@ -76,6 +76,43 @@ def sim_manhattan(prefs, p1,p2):
 
 def sim_jaccard(prefs, p1, p2):
     print "Not Implemented"
+
+
+def get_recommendations(prefs, person, similarity = sim_pearson):
+    totals = {}
+    simSums = {}
+
+    for other in prefs: 
+        #don't compare me to myself
+        if other == person: continue
+        sim = similarity(prefs, person, other)
+
+        if sim <= 0: continue
+        for item in prefs[other]:
+
+            # only the items I haven't seen  yet
+            if item not in prefs[person] or prefs[person][item] == 0:
+                totals.setdefault(item, 0)
+                totals[item]  += prefs[other][item] * sim
+
+                simSums.setdefault(item, 0)
+                simSums[item] += sim
+    #create a nprmalized list
+    rankings = [(total/simSums[item], item) for item, total in totals.items()]
+    rankings.sort(reverse=True)
+
+    return rankings
+
+def transform_preferences(prefs):
+    result = {}
+    for person in prefs:
+        for item in prefs[person]:
+            result.setdefault(item, {})
+
+            #flip the tiem and person around
+            result[item][person]=prefs[person][item]
+
+    return result
 
 
 # return the best match for person from the pref dictionary
