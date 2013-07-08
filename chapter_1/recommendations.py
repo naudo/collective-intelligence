@@ -115,6 +115,7 @@ def transform_preferences(prefs):
     return result
 
 
+
 # return the best match for person from the pref dictionary
 # Number of results and similarity fx are opt params
 def top_matches(prefs, person, n=5, similarity=sim_pearson):
